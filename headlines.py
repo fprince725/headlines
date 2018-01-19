@@ -25,26 +25,16 @@ CURRENCY_URL = "https://api.openexchangerates.org/latest.json?app_id=6af38eb8505
 
 @app.route("/")
 def home():
-
-	publication = request.args.get("publication")
-	if not publication:
-		publication = request.cookies.get("publication")
-		if not publication:
-			publication = DEFAULTS['publication']
+	publication = get_value_with_fallback('publication')
 	articles = get_news(publication)
 
-	city = request.args.get('city')
-	if not city:
-		city = DEFAULTS['city']
+	city = get_value_with_fallback('city')
 	weather = get_weather(city)
 
-	currency_from = request.args.get('currency_from')
-	if not currency_from:
-		currency_from = DEFAULTS['currency_from']
+	currency_from = get_value_with_fallback('currency_from')
 
-	currency_to = request.args.get('currency_to')
-	if not currency_to:
-		currency_to = DEFAULTS['currency_to']
+	currency_to = get_value_with_fallback('currency_to')
+
 	currencies = None
 	rate = None
 	currencies, rate = get_rate(currency_from, currency_to)
@@ -52,10 +42,20 @@ def home():
 	response = make_response(render_template("home.html",  publication=publication.upper(), articles=articles, weather=weather, currency_from=currency_from, currency_to=currency_to, rate=rate, currencies=sorted(currencies)))
 
 	expires = datetime.now() + timedelta(days=365)
-	response.set_cookie(publication, "publication", expires=expires)
+	response.set_cookie("publication", publication, expires=expires)
+	response.set_cookie("city", city, expires=expires)
+	response.set_cookie("currency_from", currency_from, expires=expires)
+	response.set_cookie("currency_to", currency_to, expires=expires)
 
 	return response
 
+def get_value_with_fallback(key):
+	value = request.args.get(key)
+	if not value:
+		value = request.cookies.get(key)
+		if not value:
+			value = DEFAULTS[key]
+	return value
 
 def get_weather(query):
 	query = urllib.quote(query)
