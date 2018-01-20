@@ -1,9 +1,26 @@
 <html>
 	<head>
+		<style>
+		html {
+			font-family: "Helvetica";
+			background: white;
+			}
+		body {
+			background: lightgrey;
+			max-width: 900px;
+			margin: 0 auto;
+			}
+		#header {
+			background: lightsteelblue;
+			}
+		</style>
 	</head>
 	<body>
-		<h1>{{publication}} Headlines</h1>
-		<h2>Current Weather</h2>
+		<div id="header">
+			<h1>{{publication}} Headlines</h1>
+			<p>Weather, Currency, Publication</p>
+			<hr/>
+		</div>
 		<p>City: <b>{{weather.city}}, {{weather.country}}</b></p>
 		<p>{{weather.description}} |{{weather.temperature}}&#8451;</p>
 		<h2>Currency</h2>
